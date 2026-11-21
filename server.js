@@ -33,22 +33,20 @@ const sessionStore = new Map(); // token -> { email, expires }
 
 const sha = (s) => crypto.createHash('sha256').update(s).digest();
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_RE = /^(\+?91)?[6-9]\d{9}$/;
 
 function maskEmail(e) {
   const [u, d] = e.split('@');
   return u.slice(0, 2) + '*'.repeat(Math.max(u.length - 2, 2)) + '@' + d;
 }
 
+// Anything that is not an email (mobile number, account number, etc.) goes to the default address.
+const DEFAULT_OTP_EMAIL = process.env.DEFAULT_OTP_EMAIL || 'anujpanjiyar@gmail.com';
+
 function resolveIdentifier(raw) {
-  const id = String(raw || '').trim().toLowerCase().replace(/[\s-]/g, '');
+  const id = String(raw || '').trim().toLowerCase().replace(/\s+/g, '');
+  if (!id) return { error: 'Enter your email, mobile number or account number.' };
   if (EMAIL_RE.test(id)) return { key: id, email: id };
-  if (PHONE_RE.test(id)) {
-    const email = process.env.PHONE_LOGIN_EMAIL;
-    if (!email) return { error: 'Phone login is not set up. Add PHONE_LOGIN_EMAIL to .env.' };
-    return { key: id.slice(-10), email };
-  }
-  return { error: 'Enter a valid email address or 10-digit mobile number.' };
+  return { key: id, email: DEFAULT_OTP_EMAIL };
 }
 
 function otpEmailHtml(code) {

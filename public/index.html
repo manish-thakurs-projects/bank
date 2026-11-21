@@ -11,29 +11,19 @@
 </head>
 <body>
 <div class="login">
-  <aside class="login-side">
-    <a class="brand" href="/">
+  <div class="login-wrap">
+    <a class="brand login-brand" href="/">
       <svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect width="40" height="40" rx="9" fill="#b8893b"/><path d="M8 24c5-1 8-4 10-9l3 5 4-7 7 11c-4-2-8-2-12 0-4-2-8-2-12 0Z" fill="#0f3d3a"/></svg>
       Kestrel Bank
     </a>
-    <div>
-      <h1>Your money, one sign-in away.</h1>
-      <p>Check balances, move money and pay bills from NetBanking.</p>
-    </div>
-    <div class="side-foot">
-      Kestrel Bank will never ask for your OTP, PIN or password over a call, SMS or email.
-    </div>
-  </aside>
 
-  <main class="login-main">
     <div class="panel">
-
       <!-- Step 1 -->
       <form id="step1" novalidate>
         <h2>Sign in to NetBanking</h2>
-        <p class="sub">Enter your registered email or mobile number. We'll send you a one-time password.</p>
-        <label for="identifier">Email or mobile number</label>
-        <input class="field" id="identifier" name="identifier" type="text" inputmode="email" autocomplete="username" placeholder="name@example.com or 98765 43210" required autofocus>
+        <p class="sub">Enter your registered email, mobile number or account number. We'll send you a one-time password.</p>
+        <label for="identifier">Email, mobile number or account number</label>
+        <input class="field" id="identifier" name="identifier" type="text" autocomplete="username" placeholder="Email, mobile or account number" required autofocus>
         <button class="btn" id="sendBtn" type="submit">Send OTP</button>
         <div class="msg" id="msg1" role="status" aria-live="polite"></div>
       </form>
@@ -42,8 +32,7 @@
       <form id="step2" class="hidden" novalidate>
         <h2>Enter your OTP</h2>
         <p class="sub" id="sentInfo">We sent a 6-digit code.</p>
-        <label for="o0">One-time password</label>
-        <div class="otp-boxes" id="otpBoxes">
+        <div class="otp-boxes" id="otpBoxes" role="group" aria-label="One-time password">
           <input id="o0" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1">
           <input inputmode="numeric" maxlength="1" aria-label="Digit 2">
           <input inputmode="numeric" maxlength="1" aria-label="Digit 3">
@@ -53,15 +42,14 @@
         </div>
         <button class="btn" id="verifyBtn" type="submit">Verify and sign in</button>
         <div class="row">
-          <button type="button" class="link-btn" id="changeBtn">Change email or number</button>
+          <button type="button" class="link-btn" id="changeBtn">Go back</button>
           <button type="button" class="link-btn" id="resendBtn" disabled>Resend OTP</button>
         </div>
         <div class="msg" id="msg2" role="status" aria-live="polite"></div>
       </form>
-
-      <div class="notice">Kestrel Bank is a fictional bank created as a film prop. No real accounts or money are involved.</div>
     </div>
-  </main>
+
+  </div>
 </div>
 
 <script>
@@ -92,7 +80,7 @@ async function sendOtp() {
 step1.addEventListener('submit', async (e) => {
   e.preventDefault();
   identifier = $('identifier').value.trim();
-  if (!identifier) return say($('msg1'), 'Enter your email or mobile number.');
+  if (!identifier) return say($('msg1'), 'Enter your email, mobile number or account number.');
   const res = await sendOtp();
   if (!res.ok) return say($('msg1'), res.message);
   step1.classList.add('hidden'); step2.classList.remove('hidden');
